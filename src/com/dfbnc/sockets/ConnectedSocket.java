@@ -68,7 +68,7 @@ public abstract class ConnectedSocket implements SelectedSocketHandler, Handshak
         channel.configureBlocking(false);
 
         final SelectionKey key = SocketSelector.getConnectedSocketSelector().registerSocket(channel, this);
-       
+
         if (isSSL) {
             mySocketWrapper = new SecureSocket(channel, this, key, sslContextManager);
         } else {
@@ -199,7 +199,7 @@ public abstract class ConnectedSocket implements SelectedSocketHandler, Handshak
      *
      * @param line Line to handle
      */
-    abstract void processLine(final String line);
+    public abstract void processLine(final String line);
 
     /**
      * Action to take when socket is opened and ready.
