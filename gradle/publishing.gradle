@@ -31,6 +31,7 @@ bintray {
 	pkg {
 		repo = 'dfbnc'
 		name = 'sockets'
+		userOrg = 'dfbnc'
 		licenses = ['MIT']
 		desc = 'DFBnc Sockets Library'
 		websiteUrl = 'https://github.com/dfbnc/sockets'
