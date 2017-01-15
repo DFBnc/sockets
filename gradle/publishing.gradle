@@ -2,7 +2,7 @@ publishing {
 	publications {
 		pushBintray(MavenPublication) {
 			from components.java
-			groupId 'com.dmdirc'
+			groupId 'com.dfbnc'
 			artifactId 'sockets'
 			version project.version
 		}
