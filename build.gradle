@@ -3,7 +3,7 @@ plugins {
   id 'idea'
 }
 
-group = 'com.dfbnc.sockets'
+group = 'com.dfbnc'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -12,6 +12,22 @@ sourceSets {
     main.java.srcDirs = ['src']
     test.java.srcDirs = ['test']
 }
+
+jar {
+    outputs.file "dist/dfbnc-sockets.jar"
+
+    manifest { }
+
+    doLast {
+        copy {
+            from jar.archivePath
+            into "dist/"
+            rename ".*", "dfbnc-sockets.jar"
+        }
+    }
+}
+
+// TODO: Depend on dflibs-logger
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.3'
