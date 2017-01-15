@@ -34,7 +34,7 @@ import com.dfbnc.sockets.secure.SSLContextManager;
 import com.dfbnc.sockets.secure.SecureSocket;
 // import com.dfbnc.util.IRCLine;
 import java.net.InetSocketAddress;
-// import uk.org.dataforce.libs.logger.Logger;
+import uk.org.dataforce.libs.logger.Logger;
 
 /**
  * This is responsible for taking incoming data, and separating it
@@ -93,7 +93,7 @@ public abstract class ConnectedSocket implements SelectedSocketHandler, Handshak
     public final void closeSocket(final String reason) {
         closeReason = reason;
         if (isClosed) { return; }
-        // Logger.info("Connected Socket closing ("+socketID+") - " + reason);
+        Logger.info("Connected Socket closing ("+socketID+") - " + reason);
         isClosed = true;
 
         // Close the actual socket
@@ -124,7 +124,7 @@ public abstract class ConnectedSocket implements SelectedSocketHandler, Handshak
             socketWrapperLock.await();
             return mySocketWrapper;
         } catch (InterruptedException ex) {
-            // Logger.error("Thread interrupted while waiting to get socket wrapper");
+            Logger.error("Thread interrupted while waiting to get socket wrapper");
             return null;
         }
     }

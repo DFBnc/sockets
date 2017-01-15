@@ -39,7 +39,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-// import uk.org.dataforce.libs.logger.Logger;
+import uk.org.dataforce.libs.logger.Logger;
 
 /**
  * This defines a basic SocketWrapper
@@ -137,17 +137,17 @@ public abstract class SocketWrapper {
      */
     public final void sendLine(final String line) {
         if (mySocketChannel == null) {
-            // Logger.error("Null mySocketChannel -> " + line);
+            Logger.error("Null mySocketChannel -> " + line);
             return;
         }
 
         if (myOwner == null) {
-            // Logger.error("Null myOwner -> " + line);
+            Logger.error("Null myOwner -> " + line);
             return;
         }
 
         if (!mySocketChannel.isConnected()) {
-            // Logger.error("Trying to write to Disconnected SocketChannel -> " + line);
+            Logger.error("Trying to write to Disconnected SocketChannel -> " + line);
             myOwner.closeSocket("SocketChannel disconnected.");
             return;
         }
@@ -164,7 +164,7 @@ public abstract class SocketWrapper {
             key.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE);
             SocketSelector.getConnectedSocketSelector().getSelector().wakeup();
         } catch (CancelledKeyException ex) {
-            // Logger.warning("Trying to write but key is cancelled -> " + line);
+            Logger.warning("Trying to write but key is cancelled -> " + line);
             myOwner.closeSocket("Write Key Cancelled.");
         }
 
@@ -310,14 +310,14 @@ public abstract class SocketWrapper {
             myCharsets.clear();
             // First add the current socket charset as the first to try
             myCharsets.add(cs);
-            // Logger.debug4("Added charset to list: "+cs.displayName());
+            Logger.debug4("Added charset to list: "+cs.displayName());
             // Now add the fallbacks.
             for (String charset : Arrays.asList("UTF-8", "windows-1252", "ISO-8859-1")) {
                 try {
                     final Charset c = Charset.forName(charset);
                     if (!myCharsets.contains(c)) {
                         myCharsets.add(c);
-                        // Logger.debug4("Added charset to list: "+c.displayName());
+                        Logger.debug4("Added charset to list: "+c.displayName());
                     }
                 } catch (final Exception e) { /* Do nothing. */ }
             }
@@ -339,14 +339,14 @@ public abstract class SocketWrapper {
         CharacterCodingException firstException = null;
         synchronized (myCharsets) {
             if (myCharsets.isEmpty()) {
-                // Logger.debug4("No charsets set, using default");
+                Logger.debug4("No charsets set, using default");
                 setCharset("UTF-8");
             }
-            // Logger.debug4("My Charsets: "+myCharsets);
+            Logger.debug4("My Charsets: "+myCharsets);
             buffer.mark();
             for (Charset c : myCharsets) {
                 try {
-                    // Logger.debug4("Charset: " + c);
+                    Logger.debug4("Charset: " + c);
                     buffer.reset();
                     return c.newDecoder().decode(buffer);
                 } catch (final CharacterCodingException cce) {
@@ -390,7 +390,7 @@ public abstract class SocketWrapper {
                         selKey.interestOps(0);
                         selKey.cancel();
                     }
-                    // Logger.info("Socket got closed.");
+                    Logger.info("Socket got closed.");
                     myOwner.closeSocket("EOF from client.");
                     break;
                 } else if (numBytesRead != 0) {
@@ -404,11 +404,11 @@ public abstract class SocketWrapper {
                             try {
                                 myOwner.processLine(getCharBuffer(lineBuffer).toString());
                             } catch (final Exception ex) {
-                                // Logger.error("Unexpected exception during processLine");
+                                Logger.error("Unexpected exception during processLine");
 
                                 final StringWriter writer = new StringWriter();
                                 ex.printStackTrace(new PrintWriter(writer));
-                                // Logger.error("\tStack trace: " + writer.getBuffer());
+                                Logger.error("\tStack trace: " + writer.getBuffer());
                             }
                             lineBuffer = ByteBuffer.allocate(1024);
                         } else if (b != '\r') {
@@ -427,12 +427,12 @@ public abstract class SocketWrapper {
                     try {
                         selKey.interestOps(SelectionKey.OP_READ);
                     } catch (final CancelledKeyException cke) {
-                        // Logger.warning("Trying to switch back to read but key is cancelled");
+                        Logger.warning("Trying to switch back to read but key is cancelled");
                         myOwner.closeSocket("Read key cancelled.");
                     }
                 }
             } catch (final IOException ioe) {
-                // Logger.info("Socket has been closed.");
+                Logger.info("Socket has been closed.");
                 myOwner.closeSocket("IOException on socket: " + ioe);
             }
         }

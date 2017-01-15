@@ -31,7 +31,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
 import com.dfbnc.sockets.secure.SecureSocket;
-// import uk.org.dataforce.libs.logger.Logger;
+import uk.org.dataforce.libs.logger.Logger;
 
 /**
  * The ServerSocket for the application.
@@ -59,7 +59,7 @@ public class ListenSocket implements SelectedSocketHandler {
     public ListenSocket(final String listenhost, final NewSocketReadyHandler srhandler, final SSLContextManager sslContextManager) throws IOException {
         this.srhandler = srhandler;
         this.sslContextManager = sslContextManager;
-
+        
         final String bits[] = listenhost.split(":");
         if (bits.length > 1) {
             try {
@@ -103,8 +103,8 @@ public class ListenSocket implements SelectedSocketHandler {
             try {
                 sslContextManager.getSSLContext();
             } catch (Exception e) {
-                // Logger.error("Failed to open SSL Socket '" + host + ":" + portString + "'");
-                // Logger.error("Reason: " + e.getMessage());
+                Logger.error("Failed to open SSL Socket '" + host + ":" + portString + "'");
+                Logger.error("Reason: " + e.getMessage());
                 throw new IOException("Unable to use SSL");
             }
         }
@@ -114,7 +114,7 @@ public class ListenSocket implements SelectedSocketHandler {
 
         SocketSelector.getConnectedSocketSelector().registerSocket(ssChannel, this);
 
-        // Logger.info("Listen Socket Opened: " + host + ":" + portString);
+        Logger.info("Listen Socket Opened: " + host + ":" + portString);
     }
 
     /**
@@ -124,7 +124,7 @@ public class ListenSocket implements SelectedSocketHandler {
         try {
             ssChannel.socket().close();
         } catch (IOException e) {
-            // Logger.error("Unable to close socket.: " + e.getMessage());
+            Logger.error("Unable to close socket.: " + e.getMessage());
         }
     }
 
@@ -138,11 +138,11 @@ public class ListenSocket implements SelectedSocketHandler {
                     final SocketChannel sChannel = selChannel.accept();
 
                     if (sChannel != null) {
-                        // Logger.info("Accepting new socket.");
+                        Logger.info("Accepting new socket.");
                         srhandler.handleNewSocketReady(sChannel, (isSSL ? sslContextManager : null));
                     }
                 } catch (IOException e) {
-                    // Logger.error("Unable to open UserSocket: "+e.getMessage());
+                    Logger.error("Unable to open UserSocket: "+e.getMessage());
                 }
             }
         } catch (final CancelledKeyException cke) {

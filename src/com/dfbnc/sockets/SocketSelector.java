@@ -32,7 +32,7 @@ import java.io.StringWriter;
 import java.nio.channels.SelectableChannel;
 import java.util.concurrent.Semaphore;
 
-// import uk.org.dataforce.libs.logger.Logger;
+import uk.org.dataforce.libs.logger.Logger;
 
 /**
  * This is responsible for handling the selector for all Sockets.
@@ -141,15 +141,15 @@ public final class SocketSelector implements Runnable {
                 try {
                     ((SelectedSocketHandler) selKey.attachment()).processSelectionKey(selKey);
                 } catch (final IOException ioe) {
-                    // Logger.error("IOException while processing selected keys: " + ioe);
+                    Logger.error("IOException while processing selected keys: " + ioe);
                     selKey.cancel();
                     break;
                 } catch (final Exception ex) {
-                    // Logger.error("Unexpected exception while processing selected keys");
+                    Logger.error("Unexpected exception while processing selected keys");
 
                     final StringWriter writer = new StringWriter();
                     ex.printStackTrace(new PrintWriter(writer));
-                    // Logger.error("\tStack trace: " + writer.getBuffer());
+                    Logger.error("\tStack trace: " + writer.getBuffer());
                 }
             }
         }
@@ -166,7 +166,7 @@ public final class SocketSelector implements Runnable {
                 myConnectedSocketSelector = new SocketSelector();
                 myConnectedSocketSelector.start();
             } catch (IOException e) {
-                // Logger.error("Error opening socket selector.");
+                Logger.error("Error opening socket selector.");
             }
         }
 
