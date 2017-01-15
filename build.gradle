@@ -1,0 +1,47 @@
+plugins {
+  id 'java'
+  id 'idea'
+  id 'maven'
+  id 'maven-publish'
+  id "com.jfrog.bintray" version "1.7"
+}
+
+group = 'com.dfbnc'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets {
+    main.java.srcDirs = ['src']
+    test.java.srcDirs = ['test']
+}
+
+repositories {
+    maven {
+        url  "http://dl.bintray.com/shanemcc/dflibs"
+    }
+}
+
+dependencies {
+    compile group: 'uk.org.dataforce.libs', name: 'logger', version: '0.1'
+}
+
+jar {
+    outputs.file "dist/dfbnc-sockets.jar"
+
+    manifest { }
+
+    doLast {
+        copy {
+            from jar.archivePath
+            into "dist/"
+            rename ".*", "dfbnc-sockets.jar"
+        }
+    }
+}
+
+apply from: 'gradle/publishing.gradle'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+}
