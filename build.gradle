@@ -13,6 +13,16 @@ sourceSets {
     test.java.srcDirs = ['test']
 }
 
+repositories {
+    maven {
+        url  "http://dl.bintray.com/shanemcc/dflibs"
+    }
+}
+
+dependencies {
+    compile group: 'uk.org.dataforce.libs', name: 'logger', version: '0.1'
+}
+
 jar {
     outputs.file "dist/dfbnc-sockets.jar"
 
