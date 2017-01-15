@@ -1,0 +1,18 @@
+plugins {
+  id 'java'
+  id 'idea'
+}
+
+group = 'com.dfbnc.sockets'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets {
+    main.java.srcDirs = ['src']
+    test.java.srcDirs = ['test']
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+}
