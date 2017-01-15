@@ -1,0 +1,45 @@
+publishing {
+	publications {
+		pushBintray(MavenPublication) {
+			from components.java
+			groupId 'com.dmdirc'
+			artifactId 'sockets'
+			version project.version
+		}
+	}
+}
+
+bintray {
+	// TODO: This shouldn't shell out to git.
+	ext.getGitVersion = {directory ->
+		def stdout = new ByteArrayOutputStream()
+		exec {
+			commandLine 'git', "--git-dir=" + (new File(directory, ".git")).getAbsolutePath(), 'describe', '--tags'
+			standardOutput = stdout
+			ignoreExitValue = true
+		}
+		return stdout.toString().trim().isEmpty() ? "Unknown" : stdout.toString().trim();
+	}
+
+	def gitVersion = getGitVersion(project.projectDir)
+	project.version = gitVersion
+
+	user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+	key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+	publications = ['pushBintray']
+	publish = true
+	pkg {
+		repo = 'dfbnc'
+		name = 'sockets'
+		licenses = ['MIT']
+		desc = 'DFBnc Sockets Library'
+		websiteUrl = 'https://github.com/dfbnc/sockets'
+		issueTrackerUrl = 'https://github.com/dfbnc/sockets/issues'
+		vcsUrl = 'https://github.com/dfbnc/sockets.git'
+		version {
+			name = gitVersion
+			desc = 'DFBnc Sockets Library'
+			vcsTag = gitVersion
+		}
+	}
+}

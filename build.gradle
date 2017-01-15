@@ -1,6 +1,9 @@
 plugins {
   id 'java'
   id 'idea'
+  id 'maven'
+  id 'maven-publish'
+  id "com.jfrog.bintray" version "1.7"
 }
 
 group = 'com.dfbnc'
@@ -37,7 +40,7 @@ jar {
     }
 }
 
-// TODO: Depend on dflibs-logger
+apply from: 'gradle/publishing.gradle'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.3'
