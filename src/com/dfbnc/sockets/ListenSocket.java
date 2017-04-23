@@ -29,8 +29,6 @@ import java.nio.channels.CancelledKeyException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-
-import com.dfbnc.sockets.secure.SecureSocket;
 import uk.org.dataforce.libs.logger.Logger;
 
 /**

@@ -17,6 +17,7 @@ sourceSets {
 }
 
 repositories {
+    mavenCentral()
     maven {
         url  "http://dl.bintray.com/shanemcc/dflibs"
     }
@@ -24,6 +25,8 @@ repositories {
 
 dependencies {
     compile group: 'uk.org.dataforce.libs', name: 'logger', version: '0.1'
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.56'
+    compile group: 'org.bouncycastle', name:  'bcpkix-jdk15on', version: '1.56'
 }
 
 jar {
