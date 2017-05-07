@@ -44,10 +44,10 @@ public class SSLContextManager {
 
     /** keyStore path. */
     private final String keyStore;
-    
+
     /** keyStore password. */
     private final String storePassword;
-    
+
     /** key password. */
     private final String keyPassword;
 
@@ -56,10 +56,10 @@ public class SSLContextManager {
 
     /** Path to the PEM file containing private keys. */
     private final String privateKeyPemFile;
-    
+
     /**
      * Creates a new SSLContextManager that will read certificates from a keystore.
-     * 
+     *
      * @param keyStore keyStore path
      * @param storePassword keyStore password
      * @param keyPassword key password
@@ -74,6 +74,9 @@ public class SSLContextManager {
 
     /**
      * Creates a new SSLContextManager that will read certificates from PEM files.
+     *
+     * @param certificatePemFile Path to certificate pemfile
+     * @param privateKeyPemFile Path to private key pemfile
      */
     public SSLContextManager(final String certificatePemFile, final String privateKeyPemFile) {
         this.keyStore = null;
@@ -81,6 +84,15 @@ public class SSLContextManager {
         this.keyPassword = "dummy";
         this.certificatePemFile = certificatePemFile;
         this.privateKeyPemFile = privateKeyPemFile;
+    }
+
+    /**
+     * Set the SSLContext of this ContextManager.
+     *
+     * @param context new ssl context to use.
+     */
+    public synchronized void setSSLContext(final SSLContext context) {
+        this.sslContext = context;
     }
 
     /**
@@ -95,6 +107,7 @@ public class SSLContextManager {
      * @throws UnrecoverableKeyException  If there is a problem with the key in the keystore
      * @throws IOException If there is a problem opening the keystore
      * @throws CertificateException If there is a problem with the keystore
+     * @throws InvalidKeySpecException If there is a problem with the ssl keys
      */
     public synchronized SSLContext getSSLContext()
             throws IllegalArgumentException, KeyStoreException, NoSuchAlgorithmException,
@@ -126,8 +139,15 @@ public class SSLContextManager {
         return sslContext;
     }
 
-    private KeyStore getKeyStoreFromDisk() throws IOException, NoSuchAlgorithmException, CertificateException,
-            KeyStoreException {
+    /**
+     * Get keystore from java keystore file on disk.
+     *
+     * @return Keystore from disk.
+     * @throws NoSuchAlgorithmException If there is a problem getting the right algorithm for the SSLContext
+     * @throws IOException If there is a problem opening the keystore
+     * @throws CertificateException If there is a problem with the keystore
+     */
+    private KeyStore getKeyStoreFromDisk() throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
         if (keyStore == null || keyStore.isEmpty()) {
             throw new IllegalArgumentException("No keystore specified.");
         } else if (storePassword == null || storePassword.isEmpty()) {
@@ -144,9 +164,17 @@ public class SSLContextManager {
         return ks;
     }
 
-    private KeyStore getKeyStoreFromPemFiles()
-            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, CertificateException,
-            KeyStoreException {
+    /**
+     * Get keystore from pem files.
+     *
+     * @return Keystore from pem files.
+     * @throws KeyStoreException If there is a problem with the keystore
+     * @throws NoSuchAlgorithmException If there is a problem getting the right algorithm for the SSLContext
+     * @throws IOException If there is a problem opening the keystore
+     * @throws CertificateException If there is a problem with the keystore
+     * @throws InvalidKeySpecException If there is a problem with the ssl keys
+     */
+    private KeyStore getKeyStoreFromPemFiles() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, CertificateException, KeyStoreException {
         if (privateKeyPemFile == null || privateKeyPemFile.isEmpty()) {
             throw new IllegalArgumentException("No private key file specified.");
         } else if (certificatePemFile == null || certificatePemFile.isEmpty()) {
@@ -158,16 +186,23 @@ public class SSLContextManager {
         final PrivateKey privateKey = readPrivateKey();
         final X509Certificate[] certs = readCertificates();
 
-        KeyStore keyStore = KeyStore.getInstance("JKS");
-        keyStore.load(null);
-        keyStore.setCertificateEntry("cert-alias", certs[0]);
-        keyStore.setKeyEntry("key-alias", privateKey, keyPassword.toCharArray(), certs);
-        return keyStore;
+        final KeyStore pemKeyStore = KeyStore.getInstance("JKS");
+        pemKeyStore.load(null);
+        pemKeyStore.setCertificateEntry("cert-alias", certs[0]);
+        pemKeyStore.setKeyEntry("key-alias", privateKey, keyPassword.toCharArray(), certs);
+
+        return pemKeyStore;
     }
 
+    /**
+     * Read the private key from disk
+     *
+     * @return PrivateKey
+     * @throws IOException if we couldn't read the file.
+     */
     private PrivateKey readPrivateKey() throws IOException {
-        PEMParser parser = new PEMParser(new InputStreamReader(new FileInputStream(privateKeyPemFile)));
-        JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
+        final PEMParser parser = new PEMParser(new InputStreamReader(new FileInputStream(privateKeyPemFile)));
+        final JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
 
         Object obj;
         while ((obj = parser.readObject()) != null) {
@@ -181,11 +216,18 @@ public class SSLContextManager {
         throw new IOException("No private key found in '" + privateKeyPemFile + "'.");
     }
 
+    /**
+     * Read certificates from disk
+     *
+     * @return Array of X509Certificates from disk
+     * @throws IOException if we couldn't read the file.
+     * @throws CertificateException if there was a problem with the certificates.
+     */
     private X509Certificate[] readCertificates() throws IOException, CertificateException {
-        List<X509Certificate> certs = new ArrayList<>();
+        final List<X509Certificate> certs = new ArrayList<>();
 
-        PEMParser parser = new PEMParser(new InputStreamReader(new FileInputStream(certificatePemFile)));
-        JcaX509CertificateConverter converter = new JcaX509CertificateConverter().setProvider("BC");
+        final PEMParser parser = new PEMParser(new InputStreamReader(new FileInputStream(certificatePemFile)));
+        final JcaX509CertificateConverter converter = new JcaX509CertificateConverter().setProvider("BC");
 
         Object obj;
         while ((obj = parser.readObject()) != null) {

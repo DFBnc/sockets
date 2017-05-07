@@ -44,7 +44,7 @@ public class ListenSocket implements SelectedSocketHandler {
     /** Handler for socket-ready events. */
     final NewSocketReadyHandler srhandler;
     /** Handler for socket-ready events. */
-    final SSLContextManager sslContextManager;
+    private SSLContextManager sslContextManager;
 
     /**
      * Create a new ListenSocket.
@@ -57,7 +57,7 @@ public class ListenSocket implements SelectedSocketHandler {
     public ListenSocket(final String listenhost, final NewSocketReadyHandler srhandler, final SSLContextManager sslContextManager) throws IOException {
         this.srhandler = srhandler;
         this.sslContextManager = sslContextManager;
-        
+
         final String bits[] = listenhost.split(":");
         if (bits.length > 1) {
             try {
@@ -76,6 +76,24 @@ public class ListenSocket implements SelectedSocketHandler {
         } else {
             throw new IOException(listenhost+" is not a valid listenhost");
         }
+    }
+
+    /**
+     * Is this an SSL Listen Socket?
+     *
+     * @return true or false.
+     */
+    public boolean isSSL() {
+        return isSSL;
+    }
+
+    /**
+     * Change the SSL Context Manager.
+     *
+     * @param sslContextManager new SSL Context Manager
+     */
+    public void setSSLContextManager(final SSLContextManager sslContextManager) {
+        this.sslContextManager = sslContextManager;
     }
 
     /**
@@ -149,5 +167,4 @@ public class ListenSocket implements SelectedSocketHandler {
             close();
         }
     }
-
 }
