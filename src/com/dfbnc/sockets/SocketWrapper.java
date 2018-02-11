@@ -344,11 +344,11 @@ public abstract class SocketWrapper {
                 setCharset("UTF-8");
             }
             Logger.debug4("My Charsets: "+myCharsets);
-            buffer.mark();
+            ((Buffer) buffer).mark();
             for (Charset c : myCharsets) {
                 try {
                     Logger.debug4("Charset: " + c);
-                    buffer.reset();
+                    ((Buffer) buffer).reset();
                     return c.newDecoder().decode(buffer);
                 } catch (final CharacterCodingException cce) {
                     if (firstException == null) {
