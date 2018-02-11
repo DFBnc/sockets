@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.ByteChannel;
@@ -383,7 +384,7 @@ public abstract class SocketWrapper {
         if (selKey.isValid() && selKey.isReadable()) {
             int numBytesRead;
             do {
-                buffer.clear();
+                ((Buffer) buffer).clear();
                 numBytesRead = read(buffer);
                 if (numBytesRead == -1) {
                     if (selKey.isValid()) {
@@ -394,13 +395,13 @@ public abstract class SocketWrapper {
                     myOwner.closeSocket("EOF from client.");
                     break;
                 } else if (numBytesRead != 0) {
-                    buffer.flip();
+                    ((Buffer) buffer).flip();
 
                     byte b;
                     for (int i = 0; i < buffer.limit(); ++i) {
                         b = buffer.get();
                         if (b == '\n') {
-                            lineBuffer.flip();
+                            ((Buffer) lineBuffer).flip();
                             try {
                                 myOwner.processLine(getCharBuffer(lineBuffer).toString());
                             } catch (final Exception ex) {
