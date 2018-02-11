@@ -45,6 +45,8 @@ public class ListenSocket implements SelectedSocketHandler {
     final NewSocketReadyHandler srhandler;
     /** Handler for socket-ready events. */
     private SSLContextManager sslContextManager;
+    /** Is this socket supposed to be closed? */
+    private boolean isClosed = false;
 
     /**
      * Create a new ListenSocket.
@@ -139,6 +141,7 @@ public class ListenSocket implements SelectedSocketHandler {
     public synchronized void close() {
         try {
             ssChannel.socket().close();
+            isClosed = true;
         } catch (IOException e) {
             Logger.error("Unable to close socket.: " + e.getMessage());
         }
@@ -147,6 +150,10 @@ public class ListenSocket implements SelectedSocketHandler {
     @Override
     public void processSelectionKey(final SelectionKey selKey) {
         try {
+            if (isClosed) {
+                throw new UnsupportedOperationException("Unable to accept connections on closed sockets.");
+            }
+
             if (selKey.isAcceptable()) {
                 final ServerSocketChannel selChannel = (ServerSocketChannel) selKey.channel();
 
