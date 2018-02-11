@@ -37,6 +37,7 @@
 package com.dfbnc.sockets.secure;
 
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.ClosedChannelException;
@@ -158,7 +159,7 @@ public class SSLByteChannel implements ByteChannel {
         }
 
         // Add the data to the buffer
-        inAppData.flip();
+        ((Buffer) inAppData).flip();
         int posBefore = buffer.position();
         buffer.put(inAppData);
         int posAfter = buffer.position();
@@ -232,7 +233,7 @@ public class SSLByteChannel implements ByteChannel {
         if (count < 0) { throw new ClosedChannelException(); }
 
         // Unwrap it into the buffer
-        inNetData.flip();
+        ((Buffer) inNetData).flip();
         final SSLEngineResult ser;
         try {
             ser = myEngine.unwrap(inNetData, inAppData);
@@ -255,7 +256,7 @@ public class SSLByteChannel implements ByteChannel {
      */
     private WrapResult wrap() throws IOException, SSLException {
         // Wrap the data
-        outAppData.flip();
+        ((Buffer) outAppData).flip();
         final SSLEngineResult ser;
         try {
             ser = myEngine.wrap(outAppData,  outNetData);
@@ -267,7 +268,7 @@ public class SSLByteChannel implements ByteChannel {
         outAppData.compact();
 
         // Write it out
-        outNetData.flip();
+        ((Buffer) outNetData).flip();
         int total = 0;
         while (outNetData.hasRemaining()) {
             total += myChannel.write(outNetData);
