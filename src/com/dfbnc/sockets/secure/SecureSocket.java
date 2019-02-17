@@ -21,21 +21,9 @@
  */
 package com.dfbnc.sockets.secure;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
 
@@ -80,7 +68,7 @@ public class SecureSocket extends SocketWrapper {
                 // Downgrade the socket so that the user sees our error message.
                 myByteChannel = null;
             }
-            this.sendLine("Closing socket due to SSL Error: " + ioe.getMessage());
+            this.sendLine("ERROR :- Closing socket due to SSL Error: " + ioe.getMessage());
         }
 
         return true;
