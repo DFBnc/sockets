@@ -316,7 +316,9 @@ public class SSLByteChannel implements ByteChannel {
             }
 
             if (wrapResult.ser.getHandshakeStatus() == HandshakeStatus.NEED_UNWRAP && wrapResult.bytes == 0) {
-                break;
+                if (wrapResult.ser.getStatus() != SSLEngineResult.Status.OK) {
+                    break;
+                }
             }
 
             if (wrapResult.ser.getStatus() == SSLEngineResult.Status.CLOSED) {
