@@ -3,7 +3,7 @@ plugins {
   id 'idea'
   id 'maven'
   id 'maven-publish'
-  id "com.jfrog.bintray" version "1.7"
+  id "com.jfrog.bintray" version "1.8.4"
 }
 
 group = 'com.dfbnc'
