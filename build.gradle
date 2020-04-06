@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
     compile group: 'uk.org.dataforce.libs', name: 'logger', version: '0.4'
-    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.64'
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.65'
     compile group: 'org.bouncycastle', name:  'bcpkix-jdk15on', version: '1.64'
 }
 
