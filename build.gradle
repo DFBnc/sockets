@@ -3,7 +3,6 @@ plugins {
   id 'idea'
   id 'maven'
   id 'maven-publish'
-  id "com.jfrog.bintray" version "1.8.5"
 }
 
 group = 'com.dfbnc'
@@ -19,12 +18,12 @@ sourceSets {
 repositories {
     mavenCentral()
     maven {
-        url  "http://dl.bintray.com/shanemcc/dflibs"
+        url  "https://maven.shanemcc.net/releases"
     }
 }
 
 dependencies {
-    compile group: 'uk.org.dataforce.libs', name: 'logger', version: '0.4'
+    compile group: 'uk.org.dataforce.libs', name: 'logger', version: '0.4.1'
     compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.68'
     compile group: 'org.bouncycastle', name:  'bcpkix-jdk15on', version: '1.68'
 }
